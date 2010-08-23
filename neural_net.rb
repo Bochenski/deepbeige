@@ -80,7 +80,7 @@ private
       if i < @network.count
         tier.each do |node|
           @network[i].each do |next_node|
-            weight = 0.5 #TODO: need to have randomly generated weights
+            weight = rand
             node.attach_forward_node next_node, weight
           end
         end
