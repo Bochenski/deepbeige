@@ -3,13 +3,13 @@ require_relative 'neural_net'
 
 class DeepBeige
   def initialize
-    p "Deep Beige is feeling overwhealmed."
+    p "Deep Beige is feeling tired."
     @neural_net = NeuralNet.new 9, 1, 3
   end
   
   def get_move position, moves
     game = NoughtsAndCrosses.new
-    #game.reload_position moves
+    game.reload_position moves
     
     best_move = ""
     best_score = 0

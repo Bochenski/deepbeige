@@ -12,12 +12,9 @@ class Table
     until @game.won? || @game.drawn?
       next_player = @players[@game.next_player]
       move = next_player.get_move @game.current_position, @game.move_list
-      p "attempting play move #{move } with player #{@game.next_player}"
+      p "player #{@game.next_player} plays move #{move }"
       @game.play_move @game.next_player, move
       puts @game.show_board
-      puts @game.current_position
-      p @game.move_list
-      gets
     end
   end
 end

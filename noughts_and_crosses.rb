@@ -64,8 +64,7 @@ class NoughtsAndCrosses
       p "game was drawn"
       return false
     end
-    
-    p "player #{player} plays move #{move.to_s}"
+
     @move_list << [player,move]
     
     if player == 1
