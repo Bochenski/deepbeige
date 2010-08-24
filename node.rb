@@ -9,7 +9,7 @@ class Node
   #take our input value, pass it through our sigmoid function 
   #and then pass on our output value to each of our forward nodes
   def evaluate
-    p "evaluating #{self} scale #{@scale} input #{@input_value}"
+    #p "evaluating #{self} scale #{@scale} input #{@input_value}"
     @output_value = 1/(1+Math.exp(-(@scale * @input_value)))
     #p "output value #{@output_value}"
     @forward_nodes.each do |node, weight|

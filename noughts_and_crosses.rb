@@ -1,12 +1,18 @@
 class NoughtsAndCrosses
   
-  attr_reader :winner, :move_list
+  attr_reader :winner, :move_list, :next_player
   
-  def initialize()
+  def initialize
     @position = {A1: 0, B1: 0, C1: 0, A2: 0, B2: 0, C2: 0, A3: 0, B3: 0, C3: 0}
-    @next_player = 1
+    @next_player = 0
     @move_list = []
   end
+  
+  def reload_position moves
+    moves.each do |player, move|
+      self.play_move player, move
+    end
+  end 
   
   def show_board
     board = " - - - \n"
@@ -42,11 +48,12 @@ class NoughtsAndCrosses
   end
   
   def play_move(player, move)
+    sym_move = move.to_sym
     unless player == @next_player
       p "not player #{player}'s turn"
       return false
     end
-    unless @position[move] == 0
+    unless @position[sym_move] == 0
       p "illegal move by player #{player}"
       return false
     end
@@ -62,9 +69,9 @@ class NoughtsAndCrosses
     @move_list << [player,move]
     
     if player == 1
-      @position[move] = 1
+      @position[sym_move] = 1
     else
-      @position[move] = -1
+      @position[sym_move] = -1
     end
     if won?
       p "player #{player} wins!"
@@ -74,7 +81,7 @@ class NoughtsAndCrosses
     end
     
     if @next_player == 1
-      @next_player = 2
+      @next_player = 0
     else
       @next_player = 1
     end
