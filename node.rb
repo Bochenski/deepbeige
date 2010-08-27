@@ -10,7 +10,8 @@ class Node
   #and then pass on our output value to each of our forward nodes
   def evaluate
     #p "evaluating #{self} scale #{@scale} input #{@input_value}"
-    @output_value = 1/(1+Math.exp(-(@scale * @input_value)))
+    #@output_value = 1/(1+Math.exp(-(@scale * @input_value)))
+    @output_value = Math.tanh(@input_value)
     #p "output value #{@output_value}"
     @forward_nodes.each do |node, weight|
       #p "weight #{weight} old input #{node.input_value}"

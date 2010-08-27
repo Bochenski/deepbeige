@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require_relative 'noughts_and_crosses'
 require_relative 'deep_beige'
-require_relative 'table'
+require_relative 'match'
 
 #Generate a Game
 game = NoughtsAndCrosses.new
@@ -11,8 +11,9 @@ player1 = DeepBeige.new
 player2 = DeepBeige.new
 players = [player1, player2]
 
-#Find a Table
-table = Table.new game, players
+#Create a Match
+match = Match.new players, 5
 
-#Play the game
-table.play_game
+#Play the Match
+match.play
+
