@@ -16,9 +16,13 @@ class DeepBeige
     best_move = ""
     best_score = -2
     game.legal_moves.each do |move|
-      @neural_net.input = game.current_position.values
+      game2 = NoughtsAndCrosses.new
+      game2.reload_position moves
+      game2.play_move game.next_player, move
+      @neural_net.input = game2.current_position.values
       @neural_net.evaluate
       score = @neural_net.output_value
+      #p "move #{move} evaluated as #{score}"
       if score > best_score
         best_score = score
         best_move = move

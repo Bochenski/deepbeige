@@ -24,7 +24,7 @@ class NeuralNet
         node.evaluate
       end
     end
-
+    
     self.output
   end  
   
@@ -47,6 +47,11 @@ protected
   
   #Nets can make small changes (mutations) to themselves
   def mutate
+  end
+  
+  def clone
+    #iterate in reverse through each tier
+    
   end
 
 private
@@ -79,9 +84,10 @@ private
     @network.each do |tier|
       if i < @network.count
         tier.each do |node|
+          j = 0
           @network[i].each do |next_node|
-            weight = rand
-            node.attach_forward_node next_node, weight
+            node.attach_forward_node next_node, j
+            j += 1
           end
         end
       end

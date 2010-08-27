@@ -14,7 +14,7 @@ class Table
       move = next_player.get_move @game.current_position, @game.move_list
       p "player #{@game.next_player} plays move #{move }"
       @game.play_move @game.next_player, move
-      puts @game.show_board
+      #puts @game.show_board
     end
   end
 end
