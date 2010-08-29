@@ -40,6 +40,41 @@ class NeuralNet
     value
   end
   
+  def fingerprint
+    topline = ""
+    fingerprint = ""
+    @network.each do |tier|
+      topline << "#{tier.count},"
+      tier.each do |node| 
+        fingerprint << node.fingerprint
+      end
+    end  
+    topline.chop + "\n" + fingerprint
+  end
+  
+  def reload fingerprint
+    #fingerprint contains an array of strings
+    i = 0
+    tiers = fingerprint[i].split(',').to_a
+    i += 1
+        
+    @network = []
+    tiers.each do |tier|
+      nodes = []
+      tier.to_i.times do
+        node_fingerprint = fingerprint[i]
+        i += 1
+        node = Node.new
+        node.reload node_fingerprint
+        nodes << node
+      end
+      @network << nodes
+    end
+  
+    link_tiers
+    true
+  end
+  
 protected  
   #Nets can procreate with other nets and produce a new net
   def procreate (dad)
@@ -50,8 +85,21 @@ protected
   end
   
   def clone
-    #iterate in reverse through each tier
-    
+    clone = NeuralNet.new @network.first.count, @network.last.count, (@network.count -2)
+    #iterate in through each tier
+    @network.each do |tier|
+      nodes = []
+      tier.each do |node|
+        cloned_node = node.clone
+        cloned_node.detach_all_forward_nodes
+        nodes << cloned_node
+      end
+      clone.network << nodes
+    end
+    #now relink the network
+    clone.link_tiers
+    #and send back our clone
+    clone
   end
 
 private
@@ -78,6 +126,7 @@ private
     @network << output_nodes
   end
   
+protected
   def link_tiers
     #first cut lets link every node on a tier to each node on the subsequent tier
     i = 1

@@ -30,6 +30,25 @@ class DeepBeige
     end
     best_move
   end
+  
+  def train
+  end
+  
+  def load_from_file file
+    fingerprint = []
+    File.open(file, 'r') do |f|
+      while line = f.gets do
+        fingerprint << line
+      end
+    end
+    @neural_net.reload fingerprint
+  end
+  
+  def save_to_file file
+    File.open(file, 'w')  do |f|
+       f.write(@neural_net.fingerprint) 
+    end
+  end
 end
 
 

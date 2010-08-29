@@ -9,6 +9,7 @@ game = NoughtsAndCrosses.new
 #Generate Players
 player1 = DeepBeige.new
 player2 = DeepBeige.new
+
 players = [player1, player2]
 
 #Create a Match

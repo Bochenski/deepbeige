@@ -69,6 +69,25 @@ class Node
     clone
   end
   
+  def fingerprint
+    fingerprint = "#{@deviation}:"
+    @weights.each do |weight|
+      fingerprint += "#{weight.to_s},"
+    end
+    fingerprint = fingerprint.chop + "\n"
+  end
+  
+  def reload fingerprint
+    self.detatch_all_forward_nodes
+    @weights = []
+    self.deviation = fingerprint.split(':')[0].to_f
+    if fingerprint.split(":").count == 2
+      fingerprint.split(":")[1].split(',').each do |weight|
+        @weights << weight.to_f
+      end
+    end
+  end
+  
 private  
   def gaussian_random
      u1 = u2 = w = g1 = g2 = 0  # declare
