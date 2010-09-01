@@ -1,4 +1,4 @@
-class PickANumber
+class PickANumber < Game
   
   attr_reader :winner, :move_list, :next_player
   attr_accessor :quiet, :verbose
@@ -6,12 +6,6 @@ class PickANumber
     @position = {"1" => 0,"2" => 0, "3" => 0}
     @next_player = 0
     @move_list = []
-  end
-  
-  def display message
-    unless @quiet
-      p message
-    end
   end
   
   def legal_moves
@@ -22,12 +16,6 @@ class PickANumber
       end
     end
     legal_moves
-  end
-  
-  def reload_position moves
-    moves.each do |player, move|
-      self.play_move player, move
-    end
   end
   
   def show_board

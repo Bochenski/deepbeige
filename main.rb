@@ -1,11 +1,4 @@
 #!/usr/bin/env ruby
-require_relative 'noughts_and_crosses'
-require_relative 'pick_a_number'
-require_relative 'deep_beige'
-require_relative 'match'
-require_relative 'human'
-
-
 
 def play_against_population name, game
   #ok so now I'm interested in playing my best creation

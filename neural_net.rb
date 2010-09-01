@@ -1,5 +1,3 @@
-require_relative 'Node'
-
 class NeuralNet
   attr_accessor :input
   attr_reader :network              

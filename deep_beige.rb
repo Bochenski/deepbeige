@@ -1,5 +1,3 @@
-require_relative 'noughts_and_crosses'
-require_relative 'neural_net'
 require 'uuid'
 class DeepBeige
 

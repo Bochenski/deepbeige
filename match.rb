@@ -1,6 +1,6 @@
 #A match is a series of games between players
-require_relative 'noughts_and_crosses'
-require_relative 'table'
+require 'noughts_and_crosses'
+require 'table'
 require 'uuid'
 
 class Match

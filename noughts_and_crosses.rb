@@ -1,4 +1,5 @@
-class NoughtsAndCrosses
+require 'game'
+class NoughtsAndCrosses < Game
   
   attr_reader :winner, :move_list, :next_player
   attr_accessor :quiet, :verbose
@@ -7,19 +8,7 @@ class NoughtsAndCrosses
     @next_player = 0
     @move_list = []
   end
-  
-  def display message
-    unless @quiet
-      p message
-    end
-  end
-  
-  def reload_position moves
-    moves.each do |player, move|
-      self.play_move player, move
-    end
-  end 
-  
+
   def show_board
     board = " - - - \n"
     i = 0
