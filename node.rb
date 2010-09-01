@@ -1,11 +1,11 @@
 class Node
   attr_reader :forward_nodes, :output_value
-  attr_accessor :input_value, :deviation
+  attr_accessor :input_value, :deviation, :weights
   def initialize
     @forward_nodes = {}
     @weights =[]
     @input_value = 0
-    @deviation = rand
+    @deviation = rand / 4
   end
   #take our input value, pass it through our sigmoid function (tanh)
   #and then pass on our output value to each of our forward nodes
@@ -33,37 +33,38 @@ class Node
   end
   
   def mutate
-    print "old weights: #{@weights.values}"
+    new_weights = []
     @weights.each do |weight|
-      weight = gaussian_random * @deviation + weight   # new_random_number = gaussian_rand * standard_deviation + average
+      new_weights << gaussian_random * @deviation + weight   # new_random_number = gaussian_rand * standard_deviation + average
     end
-    print "new weights: #{@weights.values}"
-    
-    i = 0
-    @forward_values.each do |key,value|
-      @forward_values[key] = @weights[i]
-      i += 1
+    @weights = new_weights
+    if @forward_values
+      i = 0
+      @forward_values.each do |key,value|
+        @forward_values[key] = @weights[i]
+        i += 1
+      end
     end
     
     #and now mutate the deviation
-    @deviation = gaussian_random * @deviation + @deviation
+    @deviation = (gaussian_random * @deviation)/2 + @deviation
   end
   
   def breed
   end
   
   def clone
-    clone = self.new
+    clone = Node.new
     
     clone.deviation = self.deviation
-    self.weights.each do |weight|
+    @weights.each do |weight|
       clone.weights << weight
     end
     
     #being pure we clone the forward node refs as well
     #although in practice these are about to be updated with new nodes
     self.forward_nodes.each do |key,value| 
-      clone[key] = value
+      clone.forward_nodes[key] = value
     end
     
     clone

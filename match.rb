@@ -18,9 +18,13 @@ class Match
     table = Table.new game, @players
     table.play_game
     if game.winner
-      @player_wins[@players[game.winner].id] += 1
+      @player_wins[@players[game.winner].id] += 2
       p "#{game.winner} won that game and has #{ @player_wins[@players[game.winner].id] } wins"
       p "leading player is #{leading_player[0]} with #{leading_player[1]} wins"
+    elsif game.drawn?
+      @players.each do |player|
+        @player_wins[player.id] += 1
+      end
     end
     gets
    end

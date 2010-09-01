@@ -1,11 +1,17 @@
 class NoughtsAndCrosses
   
   attr_reader :winner, :move_list, :next_player
-  
+  attr_accessor :quiet, :verbose
   def initialize
     @position = {A1: 0, B1: 0, C1: 0, A2: 0, B2: 0, C2: 0, A3: 0, B3: 0, C3: 0}
     @next_player = 0
     @move_list = []
+  end
+  
+  def display message
+    unless @quiet
+      p message
+    end
   end
   
   def reload_position moves
@@ -50,18 +56,18 @@ class NoughtsAndCrosses
   def play_move(player, move)
     sym_move = move.to_sym
     unless player == @next_player
-      p "not player #{player}'s turn"
+      display "not player #{player}'s turn"
       return false
     end
     unless @position[sym_move] == 0
-      p "illegal move by player #{player}"
+      display "illegal move by player #{player}"
       return false
     end
     if won?
-      p "player #{winner} has already won"
+      display "player #{winner} has already won"
       return false
     elsif drawn?
-      p "game was drawn"
+      display "game was drawn"
       return false
     end
 
@@ -73,10 +79,10 @@ class NoughtsAndCrosses
       @position[sym_move] = -1
     end
     if won?
-      p "player #{player} wins!"
+      display "player #{player} wins!"
       @winner = player
     elsif drawn?
-      p "game drawn"
+      display "game drawn"
     end
     
     if @next_player == 1
@@ -84,7 +90,10 @@ class NoughtsAndCrosses
     else
       @next_player = 1
     end
-    
+    if @verbose
+      display show_board
+      display @position
+    end
     true      
   end
   
@@ -101,32 +110,37 @@ class NoughtsAndCrosses
       elsif @position[:A1] == @position[:B1] && @position[:B1] == @position[:C1]
         return true
       end
-    elsif @position[:B1] != 0
+    end
+    if @position[:B1] != 0
       if @position[:B1] == @position[:B2] && @position[:B2] == @position[:B3]
         return true
       end
-    elsif @position [:C1] != 0
-      if @position [:C1] == @position[:C2] && @position [:C2] == @position[:C3]
+    end
+    if @position[:C1] != 0
+      if @position[:C1] == @position[:C2] && @position[:C2] == @position[:C3]
         return true
       elsif @position[:C1] == @position[:B2] && @position[:B2] == @position[:A3]
         return true
       end
-    elsif @position[:A2] != 0
-      if @position [:A2] == @position[:B2] && @position [:B2] == @position[:C2]
-        return true
-      end
-    elsif @position[:A3] != 0
-      if @position[:A3] == @position[:B3] && @position [:B3] == @position[:C3]
+    end
+    if @position[:A2] != 0
+      if @position[:A2] == @position[:B2] && @position[:B2] == @position[:C2]
         return true
       end
     end
+    if @position[:A3] != 0
+      if @position[:A3] == @position[:B3] && @position[:B3] == @position[:C3]
+        return true
+      end
+    end
+    false
   end
   
   def drawn?
     unless legal_moves.count == 0
       return false
     end
-    if winner
+    if won?
       return false
     end
     true

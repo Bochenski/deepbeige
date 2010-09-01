@@ -2,6 +2,7 @@
 #Essentially a Table is a Game Controller
 class Table
   attr_reader :players, :games
+  attr_accessor :quiet
   
   def initialize game, players
     @game = game
@@ -12,9 +13,10 @@ class Table
     until @game.won? || @game.drawn?
       next_player = @players[@game.next_player]
       move = next_player.get_move @game.current_position, @game.move_list
-      p "player #{@game.next_player} plays move #{move }"
+      unless @quiet
+        p "player #{@game.next_player} plays move #{move }"
+      end
       @game.play_move @game.next_player, move
-      #puts @game.show_board
     end
   end
 end

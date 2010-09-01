@@ -2,6 +2,7 @@ require_relative 'Node'
 
 class NeuralNet
   attr_accessor :input
+  attr_reader :network              
 
   def initialize inputs, outputs, tiers
     @network = []
@@ -74,24 +75,29 @@ class NeuralNet
     link_tiers
     true
   end
-  
-protected  
-  #Nets can procreate with other nets and produce a new net
-  def procreate (dad)
-  end
-  
+
   #Nets can make small changes (mutations) to themselves
   def mutate
+    #for the time being we won't take on
+    #the ability to mutate the number of
+    #nodes and their configuration
+    #focussing instead on simple node weight mutation
+    @network.each do |tier|
+      tier.each do |node|
+        node.mutate
+      end
+    end
+    self
   end
   
   def clone
-    clone = NeuralNet.new @network.first.count, @network.last.count, (@network.count -2)
+    clone = NeuralNet.new 0,0,0
     #iterate in through each tier
     @network.each do |tier|
       nodes = []
       tier.each do |node|
         cloned_node = node.clone
-        cloned_node.detach_all_forward_nodes
+        cloned_node.detatch_all_forward_nodes
         nodes << cloned_node
       end
       clone.network << nodes
@@ -101,19 +107,24 @@ protected
     #and send back our clone
     clone
   end
-
+  
+protected  
+  #Nets can procreate with other nets and produce a new net
+  def procreate (dad)
+  end
+  
 private
   def generate_nodes inputs, outputs, tiers
     input_nodes = []
     inputs.times do 
       input_nodes << Node.new
     end
-    
-    @network << input_nodes
-  
+    if input_nodes.count > 0
+      @network << input_nodes
+    end
     (tiers - 2).times do
       tier = []
-      9.times do
+      10.times do
         tier << Node.new  
       end
       @network << tier
@@ -123,7 +134,9 @@ private
     outputs.times do
       output_nodes << Node.new
     end
-    @network << output_nodes
+    if output_nodes.count >0
+      @network << output_nodes
+    end
   end
   
 protected
