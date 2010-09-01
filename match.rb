@@ -2,8 +2,10 @@
 require_relative 'noughts_and_crosses'
 require_relative 'table'
 require 'uuid'
+
 class Match
-  def initialize players, first_to
+  def initialize players, first_to, game
+    @game = game
     @players = players
     @first_to = first_to
     @player_wins = {}
@@ -14,7 +16,7 @@ class Match
   
   def play
    while leading_player[1] < @first_to 
-    game = NoughtsAndCrosses.new
+    game = @game.class.new
     table = Table.new game, @players
     table.play_game
     if game.winner

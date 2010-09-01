@@ -1,28 +1,28 @@
 #!/usr/bin/env ruby
 require_relative 'noughts_and_crosses'
+require_relative 'pick_a_number'
 require_relative 'deep_beige'
 require_relative 'match'
 require_relative 'human'
 
-version = "0.0.1"
 
-def play_against_population name
+
+def play_against_population name, game
   #ok so now I'm interested in playing my best creation
   db = DeepBeige.new 
   db.load_from_file "#{name}/best.txt"
-  me = Human.new
-  play_noughts_and_crosses me, db, []
+  me = Human.new game
+  play_game game, me, db, []
 end
 
-def play_human_vs_human 
-  p1 = Human.new
-  p2 = Human.new
-  play_noughts_and_crosses p1,p2, []
+def play_human_vs_human game
+  p1 = Human.new game
+  p2 = Human.new game
+  play_game game, p1,p2, []
 end
 
-def play_noughts_and_crosses p1, p2, options
+def play_game game, p1, p2, options
   players = [p1,p2]
-  game = NoughtsAndCrosses.new
   table = Table.new game, players
   
   options.each do |option|
@@ -71,7 +71,7 @@ def generate_population size,name
 end
 
 
-def evolve_existing_population name, generations
+def evolve_existing_population name, generations, game
   
   population = load_population name
   scores = {}
@@ -84,7 +84,7 @@ def evolve_existing_population name, generations
 
     population.each do |player|
       5.times do
-        game = NoughtsAndCrosses.new
+        game = game.class.new
         game.quiet = false
         opponent_number = rand(population.count)
         puts "#{player.id} versus opponent #{opponent_number}"
@@ -161,39 +161,64 @@ def options
   puts "  5. Exit"
 end
 
-#This is the main execution loop of our program
-puts
-puts "Welcome to DeepBeige v#{version}"
-exit = false
-until exit do
-  options
-  input = gets.chop
-  if input == "1"
-    puts "Which Population?"
-    name = gets.chop
-    play_against_population name
-  elsif input == "2"
-    puts "Which Population?"
-    name = gets.chop
-    puts "How Many Generations?"
-    generations = gets.chop.to_i
-    evolve_existing_population name, generations
-  elsif input == "3"
-    puts "Please Enter Desired Population Size?"
-    size = gets.chop.to_i
-    puts "Please Give your Population a Name"
-    name = gets.chop
-    generate_population size, name
-    puts "Population #{name} generated sucessfully"
-  elsif input == "4"
-    play_human_vs_human
-  elsif input == "5"
-    puts "Bye Bye"
-    exit = true
+def game_choice
+  puts
+  puts "Which Game?"
+  puts "  1. Noughts and Crosses"
+  puts "  2. Pick A Number"
+  game = nil
+  case gets.chop
+  when "1"
+    game = NoughtsAndCrosses.new
+  when "2"
+    game = PickANumber.new  
   else 
-    puts "Sorry I didn't understand you"
+    game = NoughtsAndCrosses.new
+  end
+  game
+end
+
+#This is the main execution loop of our program
+def main  
+  version = "0.0.2"
+  puts
+  puts "Welcome to DeepBeige v#{version}"
+  exit = false
+  until exit do
+    options
+    input = gets.chop
+    if input == "1"
+      puts "Which Population?"
+      name = gets.chop
+      game =  game_choice
+      play_against_population name, game
+    elsif input == "2"
+      puts "Which Population?"
+      name = gets.chop
+      puts "How Many Generations?"
+      generations = gets.chop.to_i
+      game = game_choice
+      evolve_existing_population name, generations, game
+    elsif input == "3"
+      puts "Please Enter Desired Population Size?"
+      size = gets.chop.to_i
+      puts "Please Give your Population a Name"
+      name = gets.chop
+      generate_population size, name
+      puts "Population #{name} generated sucessfully"
+    elsif input == "4"
+      game = game_choice
+      play_human_vs_human game
+    elsif input == "5"
+      puts "Bye Bye"
+      exit = true
+    else 
+      puts "Sorry I didn't understand you"
+    end
   end
 end
+
+main #runs main program loop
 
 
 

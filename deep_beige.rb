@@ -10,7 +10,7 @@ class DeepBeige
     @id = UUID.new.to_s.split(':')[1].chop
   end
   
-  def get_move position, moves
+  def get_move position, moves,
     game = NoughtsAndCrosses.new
     game.quiet = true
     game.reload_position moves
@@ -45,6 +45,10 @@ class DeepBeige
     clone = DeepBeige.new
     clone.neural_net = @neural_net.clone
     clone
+  end
+  
+  def train
+    
   end
   
   def load_from_file file
