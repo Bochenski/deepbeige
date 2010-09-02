@@ -6,6 +6,15 @@ class DeepBeige
   def initialize
     @neural_net = NeuralNet.new 9, 1, 3
     @id = UUID.new.to_s.split(':')[1].chop
+    @population =[]
+  end
+  
+  def load_game game_name
+    case game_name
+    when "Noughts and Crosses"
+    when "Pick a Number"
+    else
+    end
   end
   
   def get_move position, moves,
@@ -34,17 +43,7 @@ class DeepBeige
     end
     best_move
   end
-  
-  def mutate
-    @neural_net.mutate
-  end
-  
-  def clone
-    clone = DeepBeige.new
-    clone.neural_net = @neural_net.clone
-    clone
-  end
-  
+
   def train
     
   end
@@ -66,9 +65,21 @@ class DeepBeige
        f.write(@neural_net.fingerprint) 
     end
   end
+  
 protected
   def neural_net= neural_net
     @neural_net = neural_net
+  end
+  
+private 
+  def mutate
+    @neural_net.mutate
+  end
+
+  def clone
+    clone = DeepBeige.new
+    clone.neural_net = @neural_net.clone
+    clone
   end
 end
 
