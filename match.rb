@@ -1,5 +1,4 @@
 #A match is a series of games between players
-require 'noughts_and_crosses'
 require 'table'
 require 'uuid'
 

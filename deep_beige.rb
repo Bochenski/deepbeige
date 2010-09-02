@@ -1,31 +1,37 @@
-require 'uuid'
-class DeepBeige
+require_relative 'neural_net'
 
-  attr_accessor :id
+class DeepBeige
   
   def initialize
-    @neural_net = NeuralNet.new 9, 1, 3
-    @id = UUID.new.to_s.split(':')[1].chop
+    @neural_net = NeuralNet.new
     @population =[]
   end
   
-  def load_game game_name
+  def id
+    @neural_net.id
+  end
+  
+  def start_game game_name
+    @game_name = game_name
     case game_name
-    when "Noughts and Crosses"
-    when "Pick a Number"
-    else
+    when "NoughtsAndCrosses"
+      @neural_net.generate 9, 1, 3
+      @neural_net.load_from_file "DeepBeige/NoughtsAndCrosses/best.txt"
+    when "PickANumber"
+      @neural_net.generate 3,1,2
+      @neural_net.load_from_file "DeepBeige/PickANumber/best.txt"
     end
   end
   
-  def get_move position, moves,
-    game = NoughtsAndCrosses.new
+  def get_move position, moves
+    game = game_from_name @game_name
     game.quiet = true
     game.reload_position moves
     
     best_move = ""
     best_score = -2
     game.legal_moves.each do |move|
-      game2 = NoughtsAndCrosses.new
+      game2 = game_from_name @game_name
       game2.quiet = true
       game2.reload_position moves
       game2.play_move game.next_player, move
@@ -44,42 +50,159 @@ class DeepBeige
     best_move
   end
 
-  def train
-    
-  end
-  
-  def load_from_file file
-    fingerprint = []
-    File.open(file, 'r') do |f|
-      @id = f.gets.chop
-      while line = f.gets do
-        fingerprint << line
-      end
-    end
-    @neural_net.reload fingerprint
-  end
-  
-  def save_to_file file
-    File.open(file, 'w')  do |f|
-       f.puts id
-       f.write(@neural_net.fingerprint) 
-    end
-  end
-  
-protected
-  def neural_net= neural_net
-    @neural_net = neural_net
-  end
-  
-private 
-  def mutate
-    @neural_net.mutate
+  def learn game
+    generate_population 30, game.name
   end
 
-  def clone
-    clone = DeepBeige.new
-    clone.neural_net = @neural_net.clone
-    clone
+  def train generations, game 
+    @game_name = game.name   
+    @population = load_population game.name
+    
+    #reset scores
+    scores = {}
+    @population.each do |neuralnet|
+      scores[neuralnet.id] = 0
+    end
+    
+    generation_number = 1
+    generations.times do
+      puts "Evolving Generation #{generation_number}"
+      player_number = 0
+      @population.each do |neuralnet|
+        player1 = DeepBeige.new 
+        player1.neural_net = neuralnet
+        player1.game_name = @game_name
+        
+        5.times do
+          game = game.class.new
+          game.quiet = false
+          opponent_number = rand(@population.count)
+          puts "#{player_number} versus opponent #{opponent_number}"
+          opponent_net = @population[opponent_number]
+          player2 = DeepBeige.new
+          player2.neural_net = opponent_net
+          player2.game_name = @game_name
+          
+          players = [player1,player2]
+          table = Table.new game, players
+          table.quiet = true
+          table.play_game
+          if game.drawn?
+            puts "draw"
+            players.each do |player|
+              scores[player.id] +=1
+            end
+
+          elsif game.won?
+            puts "#{game.winner} won"
+            winner = players[game.winner]
+            players.each do |player|
+              if player.id == winner.id
+                scores[player.id] +=2
+              else
+                scores[player.id] -=2
+              end
+            end
+          end
+          player_number += 1
+        end
+        leaderboard =  scores.sort_by {|id, count| count}
+        position = 1
+        5.times do 
+          leader = leaderboard[leaderboard.count - position]
+          puts "#{position}. pts: #{leader[1]}, #{leader[0]}"
+          position +=1
+        end
+      end 
+      leaderboard =  scores.sort_by {|id, count| count}
+      @population.each do |neural_net|
+        if neural_net.id == leaderboard.last[0]
+          neural_net.save_to_file "DeepBeige/#{@game_name}/best.txt"
+        end
+      end
+      i = 0
+      while i < 15 do
+        @population.delete_if {|neural_net| neural_net.id == leaderboard[i][0]}
+        i +=1
+      end
+
+      new_nets = []
+      @population.each do |neural_net|
+        new_net = neural_net.clone
+        new_net.mutate
+        new_nets << new_net
+      end
+      @population.concat new_nets
+
+      scores = {}
+      @population.each do |neural_net|
+        scores[neural_net.id] = 0 
+      end
+
+      generation_number +=1
+    end
+
+    save_population game.name
+  end
+
+protected
+  def neural_net= value
+    @neural_net = value
+  end
+  def game_name= value
+    @game_name = value
+  end
+  
+private   
+  def game_from_name name
+    game = nil
+    case name
+    when "NoughtsAndCrosses"
+      game  = NoughtsAndCrosses.new
+    when "PickANumber"
+      game = PickANumber.new
+    end
+    game
+  end
+  
+  def load_population name
+    @population = []
+    Dir["deepbeige/#{name}/*[0-9].txt"].each do |filename|
+     candidate = NeuralNet.new
+     candidate.load_from_file filename
+     @population << candidate
+    end
+    @population
+  end
+  
+  def save_population name
+    #and at the end of that, we ought to save our population
+    i = 0
+    @population.each do |neural_net|
+      neural_net.save_to_file "DeepBeige/#{name}/#{i}.txt"
+      i += 1
+    end
+  end
+  
+  def generate_population size, name
+    #Generate Population
+    dir_name = "DeepBeige/#{name}"
+    unless FileTest::directory?(dir_name)
+      Dir::mkdir(dir_name)
+    end
+    @population = []
+    scores = {}
+    size.times do 
+      neural_net = NeuralNet.new
+      case name
+      when "NoughtsAndCrosses"
+        neural_net.generate 9,1,3
+      when "PickANumber"
+        neural_net.generate 9,1,2
+      end
+      @population << neural_net
+    end
+    save_population name
   end
 end
 

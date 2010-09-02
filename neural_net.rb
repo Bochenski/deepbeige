@@ -1,11 +1,13 @@
-class NeuralNet
-  attr_accessor :input
-  attr_reader :network              
+require 'uuid'
+require_relative 'node'
 
-  def initialize inputs, outputs, tiers
+class NeuralNet
+  attr_accessor :input, :id   
+  attr_reader :network       
+
+  def initialize
+    @id = UUID.new.to_s.split(':')[1].chop
     @network = []
-    generate_nodes inputs, outputs, tiers
-    link_tiers
   end
     
   def evaluate 
@@ -37,6 +39,33 @@ class NeuralNet
       value += node.output_value
     end
     value
+  end
+  
+  def generate inputs, outputs, tiers
+    @network = []
+    input_nodes = []
+    inputs.times do 
+      input_nodes << Node.new
+    end
+    if input_nodes.count > 0
+      @network << input_nodes
+    end
+    (tiers - 2).times do
+      tier = []
+      10.times do
+        tier << Node.new  
+      end
+      @network << tier
+    end
+    
+    output_nodes = []
+    outputs.times do
+      output_nodes << Node.new
+    end
+    if output_nodes.count >0
+      @network << output_nodes
+    end
+    link_tiers
   end
   
   def fingerprint
@@ -89,7 +118,7 @@ class NeuralNet
   end
   
   def clone
-    clone = NeuralNet.new 0,0,0
+    clone = NeuralNet.new
     #iterate in through each tier
     @network.each do |tier|
       nodes = []
@@ -106,35 +135,22 @@ class NeuralNet
     clone
   end
   
-protected  
-  #Nets can procreate with other nets and produce a new net
-  def procreate (dad)
+  def save_to_file file
+    File.open(file, 'w')  do |f|
+       f.puts id
+       f.write(self.fingerprint) 
+    end
   end
   
-private
-  def generate_nodes inputs, outputs, tiers
-    input_nodes = []
-    inputs.times do 
-      input_nodes << Node.new
-    end
-    if input_nodes.count > 0
-      @network << input_nodes
-    end
-    (tiers - 2).times do
-      tier = []
-      10.times do
-        tier << Node.new  
+  def load_from_file file
+    fingerprint = []
+    File.open(file, 'r') do |f|
+      @id = f.gets.chop
+      while line = f.gets do
+        fingerprint << line
       end
-      @network << tier
     end
-    
-    output_nodes = []
-    outputs.times do
-      output_nodes << Node.new
-    end
-    if output_nodes.count >0
-      @network << output_nodes
-    end
+    reload fingerprint
   end
   
 protected

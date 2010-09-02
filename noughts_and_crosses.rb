@@ -1,4 +1,4 @@
-require 'game'
+require_relative 'game'
 class NoughtsAndCrosses < Game
   
   attr_reader :winner, :move_list, :next_player
@@ -9,6 +9,10 @@ class NoughtsAndCrosses < Game
     @move_list = []
   end
 
+  def name
+    "NoughtsAndCrosses"
+  end
+  
   def show_board
     board = " - - - \n"
     i = 0

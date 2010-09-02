@@ -1,3 +1,5 @@
+require_relative 'game'
+
 class PickANumber < Game
   
   attr_reader :winner, :move_list, :next_player
@@ -6,6 +8,10 @@ class PickANumber < Game
     @position = {"1" => 0,"2" => 0, "3" => 0}
     @next_player = 0
     @move_list = []
+  end
+  
+  def name
+    "PickANumber"
   end
   
   def legal_moves
