@@ -4,7 +4,7 @@ class NoughtsAndCrosses < Game
   attr_reader :winner, :move_list, :next_player
   attr_accessor :quiet, :verbose
   def initialize
-    @position = {A1: 0, B1: 0, C1: 0, A2: 0, B2: 0, C2: 0, A3: 0, B3: 0, C3: 0}
+    @position = {:A1 => 0, :B1 => 0, :C1 => 0, :A2 => 0, :B2  => 0, :C2 => 0, :A3 => 0, :B3 => 0, :C3 => 0}
     @next_player = 0
     @move_list = []
   end

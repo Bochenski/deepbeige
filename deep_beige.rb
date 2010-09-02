@@ -104,8 +104,9 @@ class DeepBeige
               end
             end
           end
-          player_number += 1
+
         end
+        player_number += 1
         leaderboard =  scores.sort_by {|id, count| count}
         position = 1
         5.times do 
@@ -198,7 +199,7 @@ private
       when "NoughtsAndCrosses"
         neural_net.generate 9,1,3
       when "PickANumber"
-        neural_net.generate 9,1,2
+        neural_net.generate 3,1,2
       end
       @population << neural_net
     end
