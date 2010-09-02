@@ -1,6 +1,7 @@
 #A match is a series of games between players
-require 'table'
+require 'rubygems'
 require 'uuid'
+require 'table'
 
 class Match
   def initialize players, first_to, game

@@ -1,10 +1,11 @@
 #!/usr/bin/env ruby
-require_relative 'game'
-require_relative 'pick_a_number'
-require_relative 'noughts_and_crosses'
-require_relative 'human'
-require_relative 'deep_beige'
-require_relative 'table'
+require 'rubygems'
+require 'game'
+require 'pick_a_number'
+require 'noughts_and_crosses'
+require 'human'
+require 'deep_beige'
+require 'table'
 
 def play_game game, p1, p2, options
   players = [p1,p2]
@@ -63,7 +64,8 @@ def game_choice
 end
 
 #This is the main execution loop of our program
-def main  
+def main
+
   db = DeepBeige.new
   
   version = "0.1.1"
@@ -98,7 +100,7 @@ def main
   end
 end
 
-main #runs main program loop
+main unless $Cocoa
 
 
 

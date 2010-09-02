@@ -1,5 +1,6 @@
+require 'rubygems'
 require 'uuid'
-require_relative 'node'
+require 'node'
 
 class NeuralNet
   attr_accessor :input, :id   
