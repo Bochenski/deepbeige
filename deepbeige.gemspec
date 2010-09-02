@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "VERSION",
      "arena.rb",
      "deep_beige.rb",
+     "deepbeige.gemspec",
      "game.rb",
      "human.rb",
      "lib/deepbeige.rb",
