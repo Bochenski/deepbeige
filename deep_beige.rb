@@ -75,7 +75,7 @@ class DeepBeige
         
         5.times do
           game = game.class.new
-          game.quiet = false
+          game.quiet = true
           opponent_number = rand(@population.count)
           puts "#{player_number} versus opponent #{opponent_number}"
           opponent_net = @population[opponent_number]
@@ -94,7 +94,6 @@ class DeepBeige
             end
 
           elsif game.won?
-            puts "#{game.winner} won"
             winner = players[game.winner]
             players.each do |player|
               if player.id == winner.id
@@ -107,15 +106,14 @@ class DeepBeige
 
         end
         player_number += 1
-        leaderboard =  scores.sort_by {|id, count| count}
-        position = 1
-        5.times do 
-          leader = leaderboard[leaderboard.count - position]
-          puts "#{position}. pts: #{leader[1]}, #{leader[0]}"
-          position +=1
-        end
       end 
       leaderboard =  scores.sort_by {|id, count| count}
+      position = 1
+      5.times do 
+        leader = leaderboard[leaderboard.count - position]
+        puts "#{position}. pts: #{leader[1]}, #{leader[0]}"
+        position +=1
+      end
       @population.each do |neural_net|
         if neural_net.id == leaderboard.last[0]
           neural_net.save_to_file "DeepBeige/#{@game_name}/best.txt"
