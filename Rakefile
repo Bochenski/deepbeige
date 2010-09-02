@@ -5,8 +5,8 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "deepbeige"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = "An AI learning program that plays board games"
+    gem.description = "An AI learning program that plays board games"
     gem.email = "david@bochenski.co.uk"
     gem.homepage = "http://github.com/bochenski/deepbeige"
     gem.authors = ["David Bochenski"]
