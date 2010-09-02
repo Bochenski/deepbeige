@@ -1,4 +1,4 @@
-require_relative 'game'
+require 'game'
 class NoughtsAndCrosses < Game
   
   attr_reader :winner, :move_list, :next_player

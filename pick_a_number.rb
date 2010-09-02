@@ -1,4 +1,4 @@
-require_relative 'game'
+require 'game'
 
 class PickANumber < Game
   

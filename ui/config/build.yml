@@ -1,0 +1,8 @@
+name: DeepBeige
+load: lib/application.rb
+version: "1.0"
+icon: resources/DeepBeige.icns
+resources:
+  - resources/**/*.*
+sources: 
+  - lib/**/*.rb
