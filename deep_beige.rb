@@ -35,12 +35,18 @@ class DeepBeige
       game2.quiet = true
       game2.reload_position moves
       game2.play_move game.next_player, move
-      @neural_net.input = game2.current_position.values
+      input = game2.current_position.values
+      
+      if game.next_player == 1
+        input = []
+        game2.current_position.values.each do |value|
+          input << -value
+        end
+      end
+      
+      @neural_net.input = input
       @neural_net.evaluate
       score = @neural_net.output_value
-      if game.next_player == 0
-        score = -score
-      end
       #p "move #{move} evaluated as #{score}"
       if score > best_score
         best_score = score
@@ -77,7 +83,7 @@ class DeepBeige
           game = game.class.new
           game.quiet = true
           opponent_number = rand(@population.count)
-          puts "#{player_number} versus opponent #{opponent_number}"
+          #puts "#{player_number} versus opponent #{opponent_number}"
           opponent_net = @population[opponent_number]
           player2 = DeepBeige.new
           player2.neural_net = opponent_net
@@ -88,7 +94,6 @@ class DeepBeige
           table.quiet = true
           table.play_game
           if game.drawn?
-            puts "draw"
             players.each do |player|
               scores[player.id] +=1
             end
