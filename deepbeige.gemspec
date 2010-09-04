@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{deepbeige}
-  s.version = "0.1.0"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["David Bochenski"]
-  s.date = %q{2010-09-02}
+  s.date = %q{2010-09-04}
   s.description = %q{An AI learning program that plays board games}
   s.email = %q{david@bochenski.co.uk}
   s.extra_rdoc_files = [
@@ -40,7 +40,12 @@ Gem::Specification.new do |s|
      "table.rb",
      "test/helper.rb",
      "test/test_deepbeige.rb",
-     "tournament.rb"
+     "tournament.rb",
+     "ui/Rakefile",
+     "ui/config/build.yml",
+     "ui/lib/application.rb",
+     "ui/lib/menu.rb",
+     "ui/resources/DeepBeige.icns"
   ]
   s.homepage = %q{http://github.com/bochenski/deepbeige}
   s.rdoc_options = ["--charset=UTF-8"]
