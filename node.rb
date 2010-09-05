@@ -1,16 +1,18 @@
 class Node
   attr_reader :forward_nodes, :output_value
-  attr_accessor :input_value, :deviation, :weights
-  def initialize
+  attr_accessor :input_value, :sigma, :weights, :bias
+  def initialize sigma
+    @input_value = 0
     @forward_nodes = {}
     @weights =[]
-    @input_value = 0
-    @deviation = rand / 4
+    @bias = 0
+    @sigma = sigma
   end
-  #take our input value, pass it through our sigmoid function (tanh)
-  #and then pass on our output value to each of our forward nodes
+  #take our input value (sum of weighted outputs of backward connected nodes)
+  #, subtract the bias and pass the result through our sigmoid function (tanh)
+  # finally then pass on our output value to each of our forward nodes
   def evaluate
-    @output_value = Math.tanh(@input_value)
+    @output_value = Math.tanh(@input_value - @bias)
     #p "output value #{@output_value}"
     @forward_nodes.each do |node, weight|
       #p "weight #{weight} old input #{node.input_value}"
@@ -22,7 +24,7 @@ class Node
   
   def attach_forward_node node, sequence
     if @weights.count <= sequence
-      @weights << rand
+      @weights << ((rand * 0.4 ) - 0.2) #sampled from a uniform distribution in range ± 0.2
     end
     
     @forward_nodes[node] = @weights[sequence]
@@ -35,7 +37,7 @@ class Node
   def mutate
     new_weights = []
     @weights.each do |weight|
-      new_weights << gaussian_random * @deviation + weight   # new_random_number = gaussian_rand * standard_deviation + average
+      new_weights << weight + @sigma * gaussian_random # new_random_number = average + standard_deviation  * gaussian_rand
     end
     @weights = new_weights
     if @forward_values
@@ -46,17 +48,18 @@ class Node
       end
     end
     
-    #and now mutate the deviation
-    @deviation = (gaussian_random * @deviation)/2 + @deviation
+    #mutate the bias
+    @bias = @bias + gaussian_random * @sigma
+
+    self
   end
-  
-  def breed
-  end
-  
-  def clone
-    clone = Node.new
     
-    clone.deviation = self.deviation
+  def clone
+    clone = Node.new(self.sigma)
+    
+    clone.sigma = self.sigma
+    clone.bias = self.bias
+    
     @weights.each do |weight|
       clone.weights << weight
     end
@@ -71,7 +74,7 @@ class Node
   end
   
   def fingerprint
-    fingerprint = "#{@deviation}:"
+    fingerprint = "#{@sigma.to_s}:#{@bias.to_s}:"
     @weights.each do |weight|
       fingerprint += "#{weight.to_s},"
     end
@@ -81,9 +84,10 @@ class Node
   def reload fingerprint
     self.detatch_all_forward_nodes
     @weights = []
-    self.deviation = fingerprint.split(':')[0].to_f
-    if fingerprint.split(":").count == 2
-      fingerprint.split(":")[1].split(',').each do |weight|
+    self.sigma = fingerprint.split(':')[0].to_f
+    self.bias = fingerprint.split(':')[1].to_f
+    if fingerprint.split(":").count == 3
+      fingerprint.split(":")[2].split(',').each do |weight|
         @weights << weight.to_f
       end
     end

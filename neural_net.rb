@@ -9,6 +9,7 @@ class NeuralNet
   def initialize
     @id = UUID.new.to_s.split(':')[1].chop
     @network = []
+    @sigma = 0.05
   end
     
   def evaluate 
@@ -46,7 +47,7 @@ class NeuralNet
     @network = []
     input_nodes = []
     inputs.times do 
-      input_nodes << Node.new
+      input_nodes << Node.new(@sigma)
     end
     if input_nodes.count > 0
       @network << input_nodes
@@ -54,37 +55,44 @@ class NeuralNet
     (tiers - 2).times do
       tier = []
       10.times do
-        tier << Node.new  
+        tier << Node.new(@sigma)
       end
       @network << tier
     end
     
     output_nodes = []
     outputs.times do
-      output_nodes << Node.new
+      output_nodes << Node.new(@sigma)
     end
     if output_nodes.count >0
       @network << output_nodes
     end
     link_tiers
+    recalculate_tau
   end
   
   def fingerprint
     topline = ""
     fingerprint = ""
+    sigma = ""
+    tau = ""
     @network.each do |tier|
       topline << "#{tier.count},"
       tier.each do |node| 
         fingerprint << node.fingerprint
       end
     end  
-    topline.chop + "\n" + fingerprint
+    topline.chop + "\n" + @sigma.to_s + "\n" + @tau.to_s + "\n" + fingerprint
   end
   
   def reload fingerprint
     #fingerprint contains an array of strings
     i = 0
     tiers = fingerprint[i].split(',').to_a
+    i += 1
+    @sigma = fingerprint[i].to_f
+    i += 1
+    @tau = fingerprint[i].to_f
     i += 1
         
     @network = []
@@ -93,7 +101,7 @@ class NeuralNet
       tier.to_i.times do
         node_fingerprint = fingerprint[i]
         i += 1
-        node = Node.new
+        node = Node.new(@sigma)
         node.reload node_fingerprint
         nodes << node
       end
@@ -110,8 +118,12 @@ class NeuralNet
     #the ability to mutate the number of
     #nodes and their configuration
     #focussing instead on simple node weight mutation
+    
+    #first we mutate sigma
+    @sigma = @sigma * Math.exp(@tau * gaussian_random)
     @network.each do |tier|
       tier.each do |node|
+        node.sigma = @sigma
         node.mutate
       end
     end
@@ -120,6 +132,8 @@ class NeuralNet
   
   def clone
     clone = NeuralNet.new
+    clone.sigma = self.sigma
+    clone.tau = self.tau
     #iterate in through each tier
     @network.each do |tier|
       nodes = []
@@ -155,6 +169,8 @@ class NeuralNet
   end
   
 protected
+  attr_accessor :sigma, :tau
+  
   def link_tiers
     #first cut lets link every node on a tier to each node on the subsequent tier
     i = 1
@@ -170,5 +186,32 @@ protected
       end
       i +=1
     end
+  end
+  
+private
+  #This is a constant related to the size of our network
+  #and the number of connections it contains
+  def recalculate_tau
+    number_of_variables = 0
+    @network.each do |tier|
+      tier.each do |node|
+        number_of_variables += 1 + node.weights.count
+      end
+    end
+    @tau = 1 / (Math.sqrt(2 * Math.sqrt(number_of_variables)))
+  end
+  
+  def gaussian_random
+     u1 = u2 = w = g1 = g2 = 0  # declare
+     begin
+       u1 = 2 * rand - 1
+       u2 = 2 * rand - 1
+       w = u1 * u1 + u2 * u2
+     end while w >= 1
+      
+     w = Math::sqrt( ( -2 * Math::log(w)) / w )
+     g2 = u1 * w;
+     g1 = u2 * w;
+     # g1 is returned  
   end
 end
