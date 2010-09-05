@@ -27,13 +27,23 @@ def player_vs_deepbeige db, game
   #ok so now I'm interested in playing my best creation
   db.start_game game.name
   me = Human.new game
-  play_game game, me, db, []
+  if which_player == "1"
+    play_game game, me, db, []
+  else
+    play_game game, db, me, []
+  end
 end
 
 def player_vs_player game
   p1 = Human.new game
   p2 = Human.new game
   play_game game, p1,p2, []
+end
+
+def which_player
+  puts
+  puts "Would you like to be player 1 or 2?"
+  gets.chop
 end
 
 def options

@@ -75,40 +75,15 @@ class DeepBeige
       puts "Evolving Generation #{generation_number}"
       player_number = 0
       @population.each do |neuralnet|
-        player1 = DeepBeige.new 
-        player1.neural_net = neuralnet
-        player1.game_name = @game_name
-        
+        player = DeepBeige.new 
+        player.neural_net = neuralnet
+        player.game_name = game.name
+
         5.times do
-          game = game.class.new
-          game.quiet = true
-          opponent_number = rand(@population.count)
-          #puts "#{player_number} versus opponent #{opponent_number}"
-          opponent_net = @population[opponent_number]
-          player2 = DeepBeige.new
-          player2.neural_net = opponent_net
-          player2.game_name = @game_name
-          
-          players = [player1,player2]
-          table = Table.new game, players
-          table.quiet = true
-          table.play_game
-          if game.drawn?
-            players.each do |player|
-              scores[player.id] +=1
-            end
-
-          elsif game.won?
-            winner = players[game.winner]
-            players.each do |player|
-              if player.id == winner.id
-                scores[player.id] +=2
-              else
-                scores[player.id] -=2
-              end
-            end
-          end
-
+          play_as_player game.name, player, 1, scores
+        end
+        5.times do 
+          play_as_player game.name, player, 2, scores
         end
         player_number += 1
       end 
@@ -207,6 +182,41 @@ private
       @population << neural_net
     end
     save_population name
+  end
+  
+private
+  def play_as_player game_name, player, player_number, scores
+    game = game_from_name game_name
+    game.quiet = true
+    opponent_number = rand(@population.count)
+    #puts "#{player_number} versus opponent #{opponent_number}"
+    opponent_net = @population[opponent_number]
+    opponent = DeepBeige.new
+    opponent.neural_net = opponent_net
+    opponent.game_name = @game_name
+    players = [player, opponent]
+    if player_number == 2
+      player = [opponent,player]
+    end
+
+    table = Table.new game, players
+    table.quiet = true
+    table.play_game
+    if game.drawn?
+      players.each do |player|
+        scores[player.id] +=1
+      end
+
+    elsif game.won?
+      winner = players[game.winner]
+      players.each do |player|
+        if player.id == winner.id
+          scores[player.id] +=2
+        else
+          scores[player.id] -=2
+        end
+      end
+    end
   end
 end
 
