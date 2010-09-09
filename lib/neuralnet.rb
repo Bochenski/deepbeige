@@ -43,7 +43,28 @@ class NeuralNet
     value
   end
   
-  def generate inputs, outputs, tiers
+  def generate options 
+    inputs = 1
+    if options[:inputs]
+      inputs = options[:inputs]
+    end
+    outputs = 1
+    if options[:outputs]
+      outputs = options[:outputs]
+    end
+    tiers = 2
+    if options[:tiers]
+      tiers = options[:tiers]
+    end
+    @width = 0
+    if options[:width]
+      @width = options[:width]
+    end
+    @height = 0
+    if options [:height]
+      @height = options[:height]
+    end
+
     @network = []
     input_nodes = []
     inputs.times do 
@@ -51,6 +72,30 @@ class NeuralNet
     end
     if input_nodes.count > 0
       @network << input_nodes
+    end
+    if height > 1 && width > 1
+
+      if width == height
+        #ok, slightly impure but this is our clue
+        #that we're dealing with a 2D board and we're going 
+        #to insert a special layer to reflect the board topology
+        tiers = tiers -1
+        tier = []
+        n = 2
+        i = 0
+        j = 0
+        (height - n).times do
+          (width - n).times do
+            node = Node.new(@sigma)
+          end    
+          n  = n + 1
+          i += 1
+        end
+        @network << tier
+      else
+        #for now we will not bother with rectangles 
+      end
+     
     end
     (tiers - 2).times do
       tier = []
@@ -74,15 +119,13 @@ class NeuralNet
   def fingerprint
     topline = ""
     fingerprint = ""
-    sigma = ""
-    tau = ""
     @network.each do |tier|
       topline << "#{tier.count},"
       tier.each do |node| 
         fingerprint << node.fingerprint
       end
     end  
-    topline.chop + "\n" + @sigma.to_s + "\n" + @tau.to_s + "\n" + fingerprint
+    topline.chop + "\n" + @sigma.to_s + "\n" + @tau.to_s + "\n" + @width.to_s + "\n" + @height.to_s + "\n"+ fingerprint
   end
   
   def reload fingerprint
@@ -93,6 +136,10 @@ class NeuralNet
     @sigma = fingerprint[i].to_f
     i += 1
     @tau = fingerprint[i].to_f
+    i += 1
+    @width = fingerprint[i].to_n
+    i += 1
+    @height = fingerprint[i].to_n
     i += 1
         
     @network = []
@@ -134,6 +181,9 @@ class NeuralNet
     clone = NeuralNet.new
     clone.sigma = self.sigma
     clone.tau = self.tau
+    clone.width = self.width
+    clone.height = self.height
+    
     #iterate in through each tier
     @network.each do |tier|
       nodes = []
@@ -169,12 +219,15 @@ class NeuralNet
   end
   
 protected
-  attr_accessor :sigma, :tau
+  attr_accessor :sigma, :tau, :width, :height
   
   def link_tiers
     #first cut lets link every node on a tier to each node on the subsequent tier
     i = 1
     @network.each do |tier|
+      if i == 1 && @width > 1 && @height > 1
+        
+      end
       if i < @network.count
         tier.each do |node|
           j = 0
