@@ -16,10 +16,10 @@ class DeepBeige
     case game_name
     when "NoughtsAndCrosses"
       @neural_net.generate 9, 1, 3
-      @neural_net.load_from_file "DeepBeige/NoughtsAndCrosses/best.txt"
+      @neural_net.load_from_file (ENV["HOME"] + "/." + $application_name +" /NoughtsAndCrosses/best.txt")
     when "PickANumber"
       @neural_net.generate 3,1,2
-      @neural_net.load_from_file "DeepBeige/PickANumber/best.txt"
+      @neural_net.load_from_file (ENV["HOME"] + "/." + $application_name + "/PickANumber/best.txt")
     end
   end
   
@@ -146,7 +146,7 @@ private
   
   def load_population name
     @population = []
-    Dir["deepbeige/#{name}/*[0-9].txt"].each do |filename|
+    Dir[ENV["HOME"] + "/." + $application_name + "/#{name}/*[0-9].txt"].each do |filename|
      candidate = NeuralNet.new
      candidate.load_from_file filename
      @population << candidate
@@ -158,7 +158,8 @@ private
     #and at the end of that, we ought to save our population
     i = 0
     @population.each do |neural_net|
-      neural_net.save_to_file "DeepBeige/#{name}/#{i}.txt"
+
+      neural_net.save_to_file (ENV["HOME"] + "/." + $application_name +"/#{name}/#{i}.txt")
       i += 1
     end
   end
