@@ -15,10 +15,10 @@ class DeepBeige
     @game_name = game_name
     case game_name
     when "NoughtsAndCrosses"
-      @neural_net.generate 9, 1, 3
-      @neural_net.load_from_file (ENV["HOME"] + "/." + $application_name +" /NoughtsAndCrosses/best.txt")
+      @neural_net.generate :inputs => 9, :outputs => 1, :tiers => 3 
+      @neural_net.load_from_file (ENV["HOME"] + "/." + $application_name + "/NoughtsAndCrosses/best.txt")
     when "PickANumber"
-      @neural_net.generate 3,1,2
+      @neural_net.generate :inputs => 3, :outputs => 1, :tiers => 2 
       @neural_net.load_from_file (ENV["HOME"] + "/." + $application_name + "/PickANumber/best.txt")
     end
   end
@@ -96,7 +96,7 @@ class DeepBeige
       end
       @population.each do |neural_net|
         if neural_net.id == leaderboard.last[0]
-          neural_net.save_to_file "DeepBeige/#{@game_name}/best.txt"
+          neural_net.save_to_file (ENV["HOME"] + "/." + $application_name + "/#{@game_name}/best.txt")
         end
       end
       i = 0
@@ -165,20 +165,28 @@ private
   end
   
   def generate_population size, name
-    #Generate Population
-    dir_name = "DeepBeige/#{name}"
+    
+    #Check Directories Exist
+    home_dir = ENV["HOME"] + "/." + $application_name
+    unless FileTest::directory?(home_dir)
+      Dir::mkdir(home_dir)
+    end
+    
+    dir_name = home_dir  +"/#{name}"
     unless FileTest::directory?(dir_name)
       Dir::mkdir(dir_name)
     end
+    
+    #Generate Population
     @population = []
     scores = {}
     size.times do 
       neural_net = NeuralNet.new
       case name
       when "NoughtsAndCrosses"
-        neural_net.generate 9,1,3
+        neural_net.generate :inputs => 9, :outputs => 1, :tiers => 3
       when "PickANumber"
-        neural_net.generate 3,1,2
+        neural_net.generate :inputs => 3, :outputs => 1, :tiers => 2 
       end
       @population << neural_net
     end

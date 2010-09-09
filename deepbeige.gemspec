@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.authors = ["David Bochenski"]
   s.date = %q{2010-09-09}
   s.default_executable = %q{deepbeige}
-  s.description = %q{An AI learning program that plays board games}
+  s.description = %q{An AI learning program that plays noughts and crosses}
   s.email = %q{david@bochenski.co.uk}
   s.executables = ["deepbeige"]
   s.extra_rdoc_files = [
@@ -41,7 +41,6 @@ Gem::Specification.new do |s|
      "lib/table.rb",
      "lib/tier.rb",
      "lib/tournament.rb",
-     "population/best.txt",
      "test/helper.rb",
      "test/test_deepbeige.rb",
      "ui/Rakefile",
@@ -54,7 +53,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
-  s.summary = %q{An AI learning program that plays board games}
+  s.summary = %q{An AI learning algorithm for games}
   s.test_files = [
     "test/helper.rb",
      "test/test_deepbeige.rb"

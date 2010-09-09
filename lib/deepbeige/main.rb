@@ -1,15 +1,16 @@
+require 'rubygems'
+require 'game'
+require 'pick_a_number'
+require 'noughts_and_crosses'
+require 'human'
+require 'deepbeige'
+require 'table'
+
+$application_name = "DeepBeige"
+      
 class DeepBeige
   class Main
     class << self
-      
-      require 'rubygems'
-      require 'game'
-      require 'pick_a_number'
-      require 'noughts_and_crosses'
-      require 'human'
-      require 'deepbeige'
-      require 'table'
-
       def play_game game, p1, p2, options
         players = [p1,p2]
         table = Table.new game, players
@@ -78,7 +79,7 @@ class DeepBeige
       
       def run!(*arguments)
 
-        begin
+ #       begin
           db = DeepBeige.new
 
           version = "0.2.2"
@@ -112,10 +113,10 @@ class DeepBeige
             end
           end
           return 0
-        rescue 
-          $stderr.puts "Something Went Wrong With Deep Beige - Sorry"
-          return 1
-        end
+#        rescue 
+#          $stderr.puts "Something Went Wrong With Deep Beige - Sorry"
+#          return 1
+#        end
       end
     end
   end

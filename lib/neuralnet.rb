@@ -137,9 +137,9 @@ class NeuralNet
     i += 1
     @tau = fingerprint[i].to_f
     i += 1
-    @width = fingerprint[i].to_n
+    @width = fingerprint[i].to_i
     i += 1
-    @height = fingerprint[i].to_n
+    @height = fingerprint[i].to_i
     i += 1
         
     @network = []
