@@ -1,4 +1,4 @@
-require 'neural_net'
+require 'neuralnet'
 
 class DeepBeige
   
