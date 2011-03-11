@@ -1,13 +1,17 @@
 require 'rubygems'
-require 'uuid'
 require 'node'
 
 class NeuralNet
   attr_accessor :input, :id   
   attr_reader :network       
+  @@next_id = 0
+  
+  def self.get_id
+    @@next_id +=1
+  end
 
   def initialize
-    @id = UUID.new.to_s.split(':')[1].chop
+    @id = NeuralNet.get_id
     @network = []
     @sigma = 0.05
   end
@@ -43,7 +47,7 @@ class NeuralNet
     value
   end
   
-  def generate options 
+  def generate options
     inputs = 1
     if options[:inputs]
       inputs = options[:inputs]
@@ -202,7 +206,6 @@ class NeuralNet
   
   def save_to_file file
     File.open(file, 'w')  do |f|
-       f.puts id
        f.write(self.fingerprint) 
     end
   end
@@ -210,7 +213,6 @@ class NeuralNet
   def load_from_file file
     fingerprint = []
     File.open(file, 'r') do |f|
-      @id = f.gets.chop
       while line = f.gets do
         fingerprint << line
       end

@@ -27,9 +27,9 @@ class DeepBeige
         table.play_game
       end
 
-      def player_vs_deepbeige db, game
+      def player_vs_deepbeige db, game, options
         #ok so now I'm interested in playing my best creation
-        db.start_game game.name
+        db.start_game game.name, options
         me = Human.new game
         if which_player == "1"
           play_game game, me, db, []
@@ -77,6 +77,22 @@ class DeepBeige
         game
       end
       
+      def parameter_options
+         puts "Population Size?"
+          size = gets.chop.to_i
+          puts "Method?"
+          puts "  1. GA"
+          puts "  2. SA"
+          method = "GA"
+          case gets.chop.to_i
+          when 2
+            method = "SA"
+          else
+            method = "GA"
+          end
+          options = {:size => size, :method => method}
+      end
+      
       def run!(*arguments)
 
  #       begin
@@ -92,15 +108,18 @@ class DeepBeige
             case input = gets.chop
             when "1"
               game =  game_choice
-              player_vs_deepbeige db, game
+              options = parameter_options
+              player_vs_deepbeige db, game, options
             when "2"
               game = game_choice
               puts "How Many Generations?"
               generations = gets.chop.to_i
-              db.train generations, game
+              options = parameter_options
+              db.train generations, game, options
             when "3"
               game = game_choice
-              db.learn game
+              options = parameter_options
+              db.learn game, options
               puts "DeepBeige Reset sucessfully"
             when "4"
               game = game_choice
